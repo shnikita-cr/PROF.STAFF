@@ -1,0 +1,51 @@
+.pending-panel {
+  background:#fff;
+  border:1px solid #e9e9e9;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:18px
+}
+
+.pending-panel h2 {
+  margin-bottom:13px
+}
+
+.pending-item {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-top:1px solid #efefef;
+  padding:14px 0
+}
+
+.pending-buttons {
+  display:flex;
+  gap:8px
+}
+
+.pending-buttons .button {
+  font-size:12px;
+  padding:9px 12px
+}
+
+.mini-shell .pending-item {
+  align-items:flex-start;
+  flex-direction:column
+}
+
+.mini-shell .pending-buttons {
+  width:100%
+}
+
+.mini-shell .pending-buttons .button {
+  flex:1
+}
+
+@media(max-width:690px) {
+  .pending-item {
+    align-items:flex-start;
+    flex-direction:column
+  }
+}
+

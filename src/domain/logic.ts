@@ -25,7 +25,7 @@ export function issuedUnits(data: AppData, bookingId: string): EquipmentUnit[] {
 
 export function availableCount(data: AppData, typeId: string, start: string, end: string, excludeBookingId?: string): number {
   const validUnits = data.units.filter(unit => unit.typeId === typeId && unit.status === 'ready');
-  const overlapping = data.bookings.filter(booking => booking.status === 'approved' && booking.id !== excludeBookingId && overlaps(start, end, booking.start, booking.end));
+  const overlapping = data.bookings.filter(booking => (booking.status === 'approved' || booking.status === 'pending') && booking.id !== excludeBookingId && overlaps(start, end, booking.start, booking.end));
   const reserved = overlapping.reduce((sum, booking) => sum + (booking.lines.find(line => line.typeId === typeId)?.quantity ?? 0), 0);
   const overdueIssued = validUnits.filter(unit => {
     const holder = unitHolder(data, unit.id);
@@ -65,7 +65,7 @@ export function issueUnit(data: AppData, bookingId: string, unitId: string): App
   const issuedCount = issuedUnits(data, bookingId).filter(item => item.typeId === unit.typeId).length;
   if (issuedCount >= line.quantity) throw new Error('Все единицы этого типа уже выданы');
   // Не выдаём единицу, зарезервированную другой заявкой на пересекающийся период.
-  const otherReservations = data.bookings.filter(item => item.id !== bookingId && item.status === 'approved' && overlaps(item.start, item.end, booking.start, booking.end));
+  const otherReservations = data.bookings.filter(item => item.id !== bookingId && (item.status === 'approved' || item.status === 'pending') && overlaps(item.start, item.end, booking.start, booking.end));
   const reservedOther = otherReservations.reduce((sum, item) => sum + (item.lines.find(entry => entry.typeId === unit.typeId)?.quantity ?? 0), 0);
   const typeReadyCount = data.units.filter(item => item.typeId === unit.typeId && item.status === 'ready').length;
   const otherIssued = data.units.filter(item => item.typeId === unit.typeId && unitHolder(data, item.id) && !isIssuedFor(data, bookingId, item.id)).length;

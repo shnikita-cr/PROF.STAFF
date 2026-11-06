@@ -31,15 +31,15 @@ docker compose -f compose.dev.yaml up
 Проверка из контейнера без установки Node.js на компьютер:
 
 ```powershell
-docker run --rm -v "${PWD}:/app" -w /app node:22-alpine sh -c "npm install --no-audit --no-fund && npm run typecheck && npm test && npm run build"
+docker run --rm -v "${PWD}:/app" -w /app node:24-alpine sh -c "npm install --no-audit --no-fund && npm run typecheck && npm test && npm run build"
 ```
 
 ## GitHub Pages
 
 1. Поместить файлы в репозиторий `PROF.STAFF`.
 2. В `Settings → Pages → Build and deployment → Source` выбрать `GitHub Actions`.
-3. Отправить изменения в `main`: опубликованный сайт будет по адресу `https://<владелец>.github.io/PROF.STAFF/`.
-4. Отправка в `dev` выполняет проверки и создаёт артефакт сборки без публикации.
+3. Отправить изменения в `main`: опубликованный сайт будет по адресу `https://<владелец>.github.io/PROF.STAFF/`, версия `dev` — `https://<владелец>.github.io/PROF.STAFF/dev/`.
+4. Отправка в `dev` или `main` собирает обе ветки и публикует оба варианта: `main` по основному адресу, `dev` в `/dev/`. Обе ветки должны существовать.
 
 ## Демонстрационный сценарий
 
@@ -61,3 +61,9 @@ docker run --rm -v "${PWD}:/app" -w /app node:22-alpine sh -c "npm install --no-
 - Оборудование и заявки демонстрационные, не подключены к реальному учёту ПРОФа.
 
 Исходная постановка кейса: «Система учёта и бронирования оборудования студобъединений».
+
+## Ветки GitHub Pages
+
+`main` публикуется в `/PROF.STAFF/`, `dev` — в `/PROF.STAFF/dev/`. Любой push в `main` или `dev` запускает проверку и публикацию обеих версий. В репозитории должны существовать обе ветки.
+
+В заявке можно собрать несколько видов оборудования и добавить комментарий. Отправленные заявки резервируют количество на выбранные даты, пока находятся на согласовании или одобрены; отказ и отмена освобождают остатки. Данные браузера локальные.

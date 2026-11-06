@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createSeed } from './seed';
-import { approveBooking, issueUnit, returnUnit, validateLines } from './logic';
+import { approveBooking, availableCount, issueUnit, returnUnit, today, validateLines } from './logic';
 import type { AppData, Booking, BookingLine, Condition } from './types';
 
 interface CreateBookingInput {
@@ -11,9 +11,17 @@ interface CreateBookingInput {
   start: string;
   end: string;
   lines: BookingLine[];
+  note?: string;
 }
 
 interface AppStore extends AppData {
+  cart: BookingLine[];
+  cartStart: string;
+  cartEnd: string;
+  addToCart: (typeId: string) => void;
+  updateCart: (typeId: string, quantity: number) => void;
+  setCartDates: (start: string, end: string) => void;
+  clearCart: () => void;
   createBooking: (input: CreateBookingInput) => string;
   decide: (id: string, approved: boolean) => void;
   cancel: (id: string) => void;
@@ -31,6 +39,28 @@ const core = (state: AppStore): AppData => ({
 
 export const useAppStore = create<AppStore>()(persist((set, get) => ({
   ...createSeed(),
+  cart: [],
+  cartStart: today(),
+  cartEnd: today(),
+  addToCart(typeId) {
+    const state = get();
+    const type = state.equipment.find(item => item.id === typeId);
+    if (!type || type.restricted) throw new Error('Позиция недоступна');
+    const current = state.cart.find(item => item.typeId === typeId)?.quantity ?? 0;
+    if (current >= availableCount(core(state), typeId, state.cartStart, state.cartEnd)) throw new Error('Свободного оборудования больше нет');
+    set({ cart: [...state.cart.filter(item => item.typeId !== typeId), { typeId, quantity: current + 1 }] });
+  },
+  updateCart(typeId, quantity) {
+    const state = get();
+    if (!Number.isInteger(quantity) || quantity < 0) throw new Error('Некорректное количество');
+    if (quantity > availableCount(core(state), typeId, state.cartStart, state.cartEnd)) throw new Error('Недостаточно свободного оборудования');
+    set({ cart: [...state.cart.filter(item => item.typeId !== typeId), ...(quantity ? [{ typeId, quantity }] : [])] });
+  },
+  setCartDates(start, end) {
+    if (!start || !end || start > end || start < today()) throw new Error('Проверьте даты');
+    set({ cartStart: start, cartEnd: end });
+  },
+  clearCart() { set({ cart: [] }); },
   createBooking(input) {
     const data = core(get());
     if (!input.applicant.trim() || !input.department.trim() || !input.eventName.trim()) throw new Error('Заполните все поля заявки');
@@ -38,7 +68,7 @@ export const useAppStore = create<AppStore>()(persist((set, get) => ({
     validateLines(data, input.lines, input.start, input.end);
     const id = String(Math.max(1042, ...data.bookings.map(booking => Number(booking.id))) + 1);
     const booking: Booking = { id, ...input, createdAt: new Date().toISOString(), status: 'pending' };
-    set({ bookings: [booking, ...data.bookings] });
+    set({ bookings: [booking, ...data.bookings], cart: [] });
     return id;
   },
   decide(id, approved) {
@@ -59,5 +89,5 @@ export const useAppStore = create<AppStore>()(persist((set, get) => ({
   },
   issue(bookingId, unitId) { set(issueUnit(core(get()), bookingId, unitId)); },
   returnEquipment(bookingId, unitId, condition) { set(returnUnit(core(get()), bookingId, unitId, condition)); },
-  reset() { set(createSeed()); },
-}),  { name: 'prof-staff-demo-v1', version: 1, partialize: state => core(state) }));
+  reset() { set({ ...createSeed(), cart: [], cartStart: today(), cartEnd: today() }); },
+}),  { name: 'prof-staff-demo-v1', version: 1, partialize: state => ({ ...core(state), cart: state.cart, cartStart: state.cartStart, cartEnd: state.cartEnd }) }));

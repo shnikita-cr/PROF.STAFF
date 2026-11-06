@@ -6,6 +6,7 @@ import { useAppStore } from '../domain/store';
 import { Empty, Status } from '../components/Elements';
 import { Scanner } from '../components/Scanner';
 import { QrCode } from '../components/QrCode';
+import { NoticeDialog } from '../components/NoticeDialog';
 import type { Condition, EquipmentUnit } from '../domain/types';
 
 function parseUnitCode(value: string): string {
@@ -65,9 +66,11 @@ export function AdminBookingDetail() {
         <div className="quick-units"><h3>{returnMode ? 'Выданные единицы' : 'Свободные единицы'}</h3>{(returnMode ? activeUnits : toIssue).slice(0, 16).map(unit => <button className="unit-chip" onClick={() => operate(unit.id)} key={unit.id}>{unit.id}</button>)}</div>
       </>}
       <div className="qr-area"><QrCode value={`${window.location.origin}${window.location.pathname}#/miniapp/admin/requests/${booking.id}`} caption={`QR заявки №${booking.id}`}/></div>
-      {error && <p className="error-text" role="alert">{error}</p>}{message && <p className="success-text" role="status">{message}</p>}
+
       <div className="muted small"><MapPin size={14}/> Адреса хранения указаны для демонстрации.</div>
     </section></aside></div>
+    {error && <NoticeDialog message={error} onClose={() => setError('')}/>}
+    {message && <NoticeDialog message={message} onClose={() => setMessage('')}/>}
     {scanner && <Scanner onClose={() => setScanner(false)} onScan={value => operate(parseUnitCode(value))}/>}
   </div>;
 }

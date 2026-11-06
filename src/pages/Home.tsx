@@ -12,11 +12,11 @@ export function Home() {
   return <main className="home-page"><div className="home-wrap">
     <div className="home-eyebrow">ДЕМОНСТРАЦИЯ СИСТЕМЫ УЧЁТА И БРОНИРОВАНИЯ</div>
     <h1>PROF<span>.</span>STAFF</h1>
-    <p className="home-intro">Оборудование студобъединений. Четыре маршрута, две роли, одна система.</p>
+    <p className="home-intro">Бронирование и учёт оборудования студобъединений</p>
     <section className="routes-grid">{routes.map(route => <Link to={route.to} className="route-card" key={route.to}>
       <div className="spread"><span className="route-device"><route.icon size={20}/>{route.device}</span><ArrowUpRight size={22}/></div>
       <h2>{route.role}</h2><p>{route.detail}</p><span className="route-action">Открыть маршрут →</span>
     </Link>)}</section>
-    <p className="home-footnote">Автономное демо: данные сохраняются в этом браузере. На другом устройстве будет отдельная демонстрационная база.</p>
+
   </div></main>;
 }

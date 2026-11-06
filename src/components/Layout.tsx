@@ -1,10 +1,9 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { Archive, ClipboardList, Home, LayoutGrid, RotateCcw, ScanLine, UserRound, Wrench } from 'lucide-react';
 import { useAppStore } from '../domain/store';
 
 export function Layout() {
   const { mode, role } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const reset = useAppStore(state => state.reset);
   const mini = mode === 'miniapp';
@@ -27,10 +26,10 @@ export function Layout() {
     </aside>}
     <div className="app-main">
       <header className="topbar">
-        <div><Link to="/" className="top-brand">PROF<span>.</span>STAFF</Link><div className="muted top-caption">{admin ? 'Панель администратора' : 'Кабинет активиста'} · {modeName}</div></div>
+        <div>{mini && <Link to="/" className="top-brand">PROF<span>.</span>STAFF</Link>}<div className="muted top-caption">{admin ? 'Панель администратора' : 'Кабинет активиста'} · {modeName}</div></div>
         <div className="top-actions"><span className="demo-mark">ДЕМО</span><Link to={`/${mini ? 'desktop' : 'miniapp'}/${role}`} className="small-link">{mini ? <Wrench size={17}/> : <UserRound size={17}/>} {mini ? 'Desktop' : 'Mini App'}</Link></div>
       </header>
-      <main className="page-body" key={location.pathname}><Outlet /></main>
+      <main className="page-body"><Outlet /></main>
       {mini && <nav className="bottom-nav">{links.map(item => <NavLink key={item.path} to={`${root}/${item.path}`} className={({ isActive }) => `bottom-item ${isActive ? 'active' : ''}`}><item.icon size={22}/><span>{item.label}</span></NavLink>)}<Link className="bottom-item" to="/"><Home size={22}/><span>Главная</span></Link></nav>}
     </div>
   </div>;

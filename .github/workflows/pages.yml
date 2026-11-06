@@ -1,51 +1,62 @@
-name: CI and Pages
+name: Build and deploy Pages
 on:
   push:
     branches: [main, dev]
   workflow_dispatch:
 permissions:
   contents: read
+  pages: write
+  id-token: write
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
 jobs:
-  check:
+  publish:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install --no-audit --no-fund
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-        env:
-          GITHUB_PAGES: 'true'
-      - uses: actions/upload-artifact@v4
-        with:
-          name: site-${{ github.ref_name }}
-          path: dist/
-          retention-days: 3
-  deploy:
-    # if: github.ref == 'refs/heads/main'
-    needs: check
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-      contents: read
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Main source
+        uses: actions/checkout@v7.0.1
         with:
-          name: site-main
-          path: dist
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          ref: main
+          path: main-source
+      - name: Dev source
+        uses: actions/checkout@v7.0.1
         with:
-          path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          ref: dev
+          path: dev-source
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Build and test main
+        working-directory: main-source
+        env:
+          GITHUB_PAGES_BASE: /PROF.STAFF/
+        run: |
+          npm install --no-audit --no-fund
+          npm run typecheck
+          npm test
+          npm run build
+      - name: Build and test dev
+        working-directory: dev-source
+        env:
+          GITHUB_PAGES_BASE: /PROF.STAFF/dev/
+        run: |
+          npm install --no-audit --no-fund
+          npm run typecheck
+          npm test
+          npm run build
+      - name: Prepare site
+        run: |
+          mkdir -p site/dev
+          cp -a main-source/dist/. site/
+          cp -a dev-source/dist/. site/dev/
+      - uses: actions/configure-pages@v6.0.0
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v5.0.1

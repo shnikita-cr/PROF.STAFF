@@ -1,47 +1,56 @@
 import type { FormEvent } from 'react';
-import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { availableCount, today } from '../domain/logic';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { availableCount } from '../domain/logic';
 import { useAppStore } from '../domain/store';
 import { Field } from '../components/Elements';
 
 export function NewBooking() {
-  const [params] = useSearchParams();
   const { mode, role } = useParams();
   const navigate = useNavigate();
   const data = useAppStore();
-  const [typeId, setTypeId] = useState(params.get('type') ?? 'radio');
-  const [start, setStart] = useState(params.get('start') ?? today());
-  const [end, setEnd] = useState(params.get('end') ?? today());
-  const [quantity, setQuantity] = useState(1);
   const [applicant, setApplicant] = useState('Демо-активист');
   const [department, setDepartment] = useState('Студенческое объединение');
   const [eventName, setEventName] = useState('Студенческое мероприятие');
+  const [note, setNote] = useState('');
   const [error, setError] = useState('');
-  const type = useMemo(() => data.equipment.find(item => item.id === typeId), [data.equipment, typeId]);
-  const available = availableCount(data, typeId, start, end);
-  const canSubmit = Boolean(start && end && start <= end && quantity >= 1 && quantity <= available && !type?.restricted);
-
   const submit = (event: FormEvent) => {
     event.preventDefault();
     try {
-      const id = data.createBooking({ applicant, department, eventName, start, end, lines: [{ typeId, quantity }] });
+      const id = data.createBooking({ applicant, department, eventName, note, start: data.cartStart, end: data.cartEnd, lines: data.cart });
       navigate(`/${mode}/${role}/bookings/${id}`);
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось создать заявку'); }
   };
-
-  return <div className="page-content narrow"><Link to={`/${mode}/${role}/catalog`} className="back-link">← Каталог</Link><div className="page-heading"><div><p className="overline">НОВАЯ ЗАЯВКА</p><h1>Бронирование</h1></div></div>
+  return <div className="page-content narrow"><Link to={`/${mode}/${role}/catalog`} className="back-link">← Каталог</Link>
+    <div className="page-heading"><div><p className="overline">БРОНИРОВАНИЕ</p><h1>Новая заявка</h1></div></div>
     <form className="surface-form" onSubmit={submit}>
-      <Field label="Оборудование"><select value={typeId} onChange={event => { setTypeId(event.target.value); setQuantity(1); }}>{data.equipment.filter(item => !item.restricted).map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select></Field>
-      <div className="form-grid"><Field label="Дата начала"><input type="date" min={today()} value={start} onChange={event => { setStart(event.target.value); if (event.target.value > end) setEnd(event.target.value); }}/></Field><Field label="Дата окончания"><input type="date" min={start} value={end} onChange={event => setEnd(event.target.value)}/></Field></div>
-      <div className="availability-line"><span>Свободно на выбранные даты</span><strong>{available} шт.</strong></div>
-      <Field label="Количество"><input type="number" min={1} max={Math.max(1, available)} value={quantity} onChange={event => setQuantity(Number(event.target.value))}/></Field>
-      <Field label="ФИО заявителя"><input value={applicant} required onChange={event => setApplicant(event.target.value)}/></Field>
-      <Field label="Подразделение"><input value={department} required onChange={event => setDepartment(event.target.value)}/></Field>
-      <Field label="Мероприятие"><input value={eventName} required onChange={event => setEventName(event.target.value)}/></Field>
-      <div className="info-note">После подачи заявка поступит на согласование. Количество зарезервируется после одобрения.</div>
+      <div className="form-grid"><Field label="Начало"><input type="date" value={data.cartStart} onChange={e => {
+        try { data.setCartDates(e.target.value, e.target.value > data.cartEnd ? e.target.value : data.cartEnd); setError(''); }
+        catch (cause) { setError(cause instanceof Error ? cause.message : 'Дата'); }
+      }}/></Field>
+      <Field label="Окончание"><input type="date" min={data.cartStart} value={data.cartEnd} onChange={e => {
+        try { data.setCartDates(data.cartStart, e.target.value); setError(''); }
+        catch (cause) { setError(cause instanceof Error ? cause.message : 'Дата'); }
+      }}/></Field></div>
+      <h3>Оборудование</h3>
+      {data.cart.length === 0 && <p className="muted">Добавьте оборудование из каталога.</p>}
+      {data.cart.map(line => {
+        const type = data.equipment.find(item => item.id === line.typeId);
+        const max = availableCount(data, line.typeId, data.cartStart, data.cartEnd);
+        return <div className="cart-row" key={line.typeId}><strong>{type?.name}</strong>
+          <div className="cart-actions"><input type="number" min={1} max={Math.max(1,max)} aria-label={`Количество: ${type?.name}`} value={line.quantity} onChange={e => {
+            try { data.updateCart(line.typeId, Number(e.target.value)); setError(''); }
+            catch (cause) { setError(cause instanceof Error ? cause.message : 'Количество'); }
+          }}/><button className="link-button" type="button" onClick={() => data.updateCart(line.typeId,0)}>Убрать</button></div>
+          {line.quantity > max && <span className="error-text">Осталось {max} шт.</span>}
+        </div>;
+      })}
+      <Field label="Заявитель"><input required value={applicant} onChange={e => setApplicant(e.target.value)}/></Field>
+      <Field label="Подразделение"><input required value={department} onChange={e => setDepartment(e.target.value)}/></Field>
+      <Field label="Мероприятие"><input required value={eventName} onChange={e => setEventName(e.target.value)}/></Field>
+      <Field label="Комментарий"><textarea rows={3} value={note} onChange={e => setNote(e.target.value)} placeholder="Пожелания к выдаче, место мероприятия"/></Field>
       {error && <p className="error-text" role="alert">{error}</p>}
-      <button type="submit" disabled={!canSubmit} className="button primary full">Отправить заявку</button>
+      <button type="submit" disabled={!data.cart.length} className="button primary full">Отправить на согласование</button>
     </form>
   </div>;
 }

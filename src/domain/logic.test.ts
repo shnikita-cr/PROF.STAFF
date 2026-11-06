@@ -9,6 +9,13 @@ describe('бронирование и учёт', () => {
     expect(availableCount(data, 'radio', existing.start, existing.end)).toBe(9);
     expect(availableCount(data, 'radio', existing.start, existing.end, existing.id)).toBe(12);
   });
+  it('учитывает заявки, ожидающие согласования, и освобождает остаток после отказа', () => {
+    const data = createSeed();
+    const pending = data.bookings.find(item => item.id === '1042')!;
+    expect(availableCount(data, 'projector', pending.start, pending.end)).toBe(1);
+    const declined = { ...data, bookings: data.bookings.map(item => item.id === pending.id ? { ...item, status: 'rejected' as const } : item) };
+    expect(availableCount(declined, 'projector', pending.start, pending.end)).toBe(2);
+  });
   it('согласует заявку и запрещает повторное согласование', () => {
     const data = createSeed();
     const approved = approveBooking(data, '1042');

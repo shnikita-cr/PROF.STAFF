@@ -5,6 +5,7 @@ import { bookingState, isOverdue } from '../domain/logic';
 import { useAppStore } from '../domain/store';
 import { Empty, Status } from '../components/Elements';
 import { Scanner } from '../components/Scanner';
+import { NoticeDialog } from '../components/NoticeDialog';
 
 export function AdminRequests() {
   const data = useAppStore();
@@ -37,6 +38,8 @@ export function AdminRequests() {
     {pending.length > 0 && <section className="pending-panel"><h2>Ожидают согласования</h2>{pending.map(item => <div className="pending-item" key={item.id}><div><strong>№{item.id} · {item.eventName}</strong><div className="muted small">{item.applicant} · {item.start} — {item.end}</div></div><div className="pending-buttons"><button className="button primary" onClick={() => decide(item.id, true)}>Согласовать</button><button className="button secondary" onClick={() => decide(item.id, false)}>Отклонить</button></div></div>)}</section>}
     <div className="filter-bar"><div className="search-field"><Search size={18}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Номер, заявитель, мероприятие"/></div><select aria-label="Фильтр статуса" value={filter} onChange={event => setFilter(event.target.value)}><option value="all">Все статусы</option><option value="pending">На согласовании</option><option value="approved">Одобрены</option><option value="rejected">Отклонены</option><option value="overdue">Просрочены</option></select></div>
     <div className="list-stack">{bookings.length === 0 && <Empty>Подходящих заявок нет.</Empty>}{bookings.map(item => <Link className="list-card" to={`/${mode}/${role}/requests/${item.id}`} key={item.id}><div className="spread"><strong>№{item.id} · {item.applicant}</strong><Status text={bookingState(data, item)} kind={item.status}/></div><div>{item.eventName}</div><div className="muted">{item.lines.map(line => `${data.equipment.find(type => type.id === line.typeId)?.name} × ${line.quantity}`).join(', ')}</div><div className="muted">{item.start} — {item.end} · {item.department}</div></Link>)}</div>
-    {error && <p className="error-text">{error}</p>}{message && <p className="success-text">{message}</p>}{scanner && <Scanner onScan={handleScan} onClose={() => setScanner(false)}/>}
+    {error && <NoticeDialog message={error} onClose={() => setError('')}/>}
+    {message && <NoticeDialog message={message} onClose={() => setMessage('')}/>}
+    {scanner && <Scanner onScan={handleScan} onClose={() => setScanner(false)}/>}
   </div>;
 }

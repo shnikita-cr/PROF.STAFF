@@ -18,7 +18,7 @@ export function Layout() {
       const state = useAppStore.getState();
       const active = state.bookings.find(booking => isOverdue(state, booking));
       if (active) setOverdueNotification(active.id);
-    }, 15000);
+    }, 5000);
     return () => window.clearTimeout(timer);
   }, [admin]);
   const root = `/${mode}/${role}`;

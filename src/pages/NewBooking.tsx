@@ -24,7 +24,8 @@ export function NewBooking() {
   };
   return <div className="page-content narrow"><Link to={`/${mode}/${role}/catalog`} className="back-link">← Каталог</Link>
     <div className="page-heading"><div><p className="overline">БРОНИРОВАНИЕ</p><h1>Новая заявка</h1></div></div>
-    <form className="surface-form" onSubmit={submit}>
+    <form className="booking-form" onSubmit={submit}>
+      <section className="booking-section"><div className="section-heading"><h2>Даты бронирования</h2><p>Укажите период использования оборудования</p></div>
       <div className="form-grid"><Field label="Начало"><input type="date" value={data.cartStart} onChange={e => {
         try { data.setCartDates(e.target.value, e.target.value > data.cartEnd ? e.target.value : data.cartEnd); setError(''); }
         catch (cause) { setError(cause instanceof Error ? cause.message : 'Дата'); }
@@ -32,8 +33,8 @@ export function NewBooking() {
       <Field label="Окончание"><input type="date" min={data.cartStart} value={data.cartEnd} onChange={e => {
         try { data.setCartDates(data.cartStart, e.target.value); setError(''); }
         catch (cause) { setError(cause instanceof Error ? cause.message : 'Дата'); }
-      }}/></Field></div>
-      <h3>Оборудование</h3>
+      }}/></Field></div></section>
+      <section className="booking-section"><div className="section-heading"><h2>Оборудование</h2><p>Проверьте состав и количество</p></div>
       {data.cart.length === 0 && <p className="muted">Добавьте оборудование из каталога.</p>}
       {[...data.cart].sort((a, b) =>
         (data.equipment.find(item => item.id === a.typeId)?.name ?? '').localeCompare(
@@ -63,10 +64,13 @@ export function NewBooking() {
           {line.quantity > max && <span className="error-text">Осталось {max} шт.</span>}
         </div>;
       })}
+      </section>
+      <section className="booking-section"><div className="section-heading"><h2>Данные заявки</h2><p>Контактное лицо и мероприятие</p></div>
       <Field label="Заявитель"><input required value={applicant} onChange={e => setApplicant(e.target.value)}/></Field>
       <Field label="Подразделение"><input required value={department} onChange={e => setDepartment(e.target.value)}/></Field>
       <Field label="Мероприятие"><input required value={eventName} onChange={e => setEventName(e.target.value)}/></Field>
       <Field label="Комментарий"><textarea rows={3} value={note} onChange={e => setNote(e.target.value)} placeholder="Пожелания к выдаче, место мероприятия"/></Field>
+      </section>
       {error && <p className="error-text" role="alert">{error}</p>}
       <button type="submit" disabled={!data.cart.length} className="button primary full">Отправить на согласование</button>
     </form>

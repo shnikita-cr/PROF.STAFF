@@ -8,6 +8,7 @@ import { Empty, Status } from '../components/Elements';
 import { Scanner } from '../components/Scanner';
 import { QrCode } from '../components/QrCode';
 import { NoticeDialog } from '../components/NoticeDialog';
+import { useModalDismiss } from '../components/useModalDismiss';
 import type { Condition, EquipmentUnit } from '../domain/types';
 
 export function AdminBookingDetail() {
@@ -20,6 +21,7 @@ export function AdminBookingDetail() {
   const [returnMode, setReturnMode] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState('');
   const [confirmCancel, setConfirmCancel] = useState('');
+  useModalDismiss(Boolean(confirmCancel), () => setConfirmCancel(''));
   const booking = data.bookings.find(item => item.id === id);
 
   if (!booking) return <div className="page-content"><Empty>Заявка не найдена</Empty></div>;
@@ -85,7 +87,7 @@ export function AdminBookingDetail() {
         <h3>Места хранения</h3><div className="storage-list">
           {candidates.filter(unit => unit.status === 'ready' || isIssuedFor(data, booking.id, unit.id)).slice(0, 35).map(unit =>
             <div className="storage-row" key={unit.id}>
-              <div><strong>{unit.id}</strong><div className="muted">Каб. {unit.room}, {unit.cabinet}, {unit.shelf}</div></div>
+              <div><Link className="inline-link" to={`/${mode}/${role}/equipment?unit=${encodeURIComponent(unit.id)}`}>{unit.id}</Link><div className="muted">Каб. {unit.room}, {unit.cabinet}, {unit.shelf}</div></div>
               <span className="muted">{isIssuedFor(data, booking.id, unit.id) ? 'Выдано' : unitHolder(data, unit.id) ? 'У другого' : 'На складе'}</span>
             </div>)}
         </div>
@@ -93,7 +95,7 @@ export function AdminBookingDetail() {
       <section className="card"><h2>История операций</h2>
         {operations.length === 0 && <p className="muted">Операций пока нет</p>}
         {operations.map(op => <div className="storage-row" key={op.id}>
-          <div><strong>{op.unitId}</strong><div className="muted">{new Date(op.at).toLocaleString('ru-RU')} · {op.operator}</div></div>
+          <div><Link className="inline-link" to={`/${mode}/${role}/equipment?unit=${encodeURIComponent(op.unitId)}`}>{op.unitId}</Link><div className="muted">{new Date(op.at).toLocaleString('ru-RU')} · {op.operator}</div></div>
           <Status text={op.kind === 'issue' ? 'Выдано' : op.kind === 'void_issue' ? 'Выдача отменена' : op.condition === 'ok' ? 'Возвращено' : 'На проверке'}/>
         </div>)}
       </section>
@@ -127,7 +129,7 @@ export function AdminBookingDetail() {
             notice(() => data.incompleteReturn(booking.id, activeUnit.id, condition), 'Возврат принят, требуется проверка')}>Зафиксировать {condition === 'damaged' ? 'повреждение' : 'некомплект'}</button>}
         </div>}
         {activeUnits.length > 0 && !returnMode && <div className="cancel-issues"><h3>Активные выдачи</h3>
-          {activeUnits.map(unit => <div className="spread" key={unit.id}><strong>{unit.id}</strong>
+          {activeUnits.map(unit => <div className="spread" key={unit.id}><Link className="inline-link" to={`/${mode}/${role}/equipment?unit=${encodeURIComponent(unit.id)}`}>{unit.id}</Link>
             <button className="link-button danger-link" onClick={() => setConfirmCancel(unit.id)}>Отменить выдачу</button></div>)}
         </div>}
       </>}
@@ -136,7 +138,9 @@ export function AdminBookingDetail() {
     {error && <NoticeDialog message={error} onClose={() => setError('')}/>}
     {message && <NoticeDialog message={message} onClose={() => setMessage('')}/>}
     {scanner && <Scanner onClose={() => setScanner(false)} onScan={processCode}/>}
-    {confirmCancel && <div className="notice-overlay" role="presentation"><div className="notice-dialog" role="dialog" aria-modal="true">
+    {confirmCancel && <div className="notice-overlay" role="presentation"
+      onMouseDown={event => { if (event.target === event.currentTarget) setConfirmCancel(''); }}>
+      <div className="notice-dialog" role="dialog" aria-modal="true">
       <h2>Отменить выдачу {confirmCancel}?</h2><p>Операция останется в истории. Оборудование снова будет числиться на складе.</p>
       <div className="dialog-actions"><button className="button" onClick={() => setConfirmCancel('')}>Назад</button>
         <button className="button primary" onClick={() => {

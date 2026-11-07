@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useModalDismiss } from '../components/useModalDismiss';
 import { Link, useParams } from 'react-router-dom';
 import { useAppStore } from '../domain/store';
 import { bookingState, isOverdue, today } from '../domain/logic';
@@ -36,6 +37,7 @@ export function MyBookingDetail() {
   const { id, mode, role } = useParams();
   const data = useAppStore();
   const [showQr, setShowQr] = useState(false);
+  useModalDismiss(showQr, () => setShowQr(false));
   const booking = data.bookings.find(item => item.id === id);
   if (!booking) return <div className="page-content"><Empty>Заявка не найдена.</Empty></div>;
   const qrValue = `PROF.STAFF:BOOKING:${booking.id}`;

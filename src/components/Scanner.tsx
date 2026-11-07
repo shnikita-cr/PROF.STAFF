@@ -14,6 +14,14 @@ export function Scanner({ onScan, onClose }: Props) {
   onScanRef.current = onScan;
 
   useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+
+  useEffect(() => {
     const scanner = new Html5QrcodeScanner(id, {
       fps: 8,
       qrbox: { width: 230, height: 230 },
@@ -28,8 +36,9 @@ export function Scanner({ onScan, onClose }: Props) {
     return () => { void scanner.clear().catch(() => undefined); };
   }, [id]);
 
-  return <div className="scanner-modal" role="dialog" aria-modal="true" aria-label="Сканирование QR-кода">
-    <div className="scanner-panel">
+  return <div className="scanner-modal" role="presentation"
+    onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="scanner-panel" role="dialog" aria-modal="true" aria-label="Сканирование QR-кода">
       <div className="spread"><h2>Сканирование QR</h2><button className="link-button" onClick={onClose}>Закрыть</button></div>
       <p className="muted">Наведите камеру на код или загрузите его фотографию.</p>
       <div id={id} className="scanner-view" />

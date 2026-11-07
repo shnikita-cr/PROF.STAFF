@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CalendarDays, Radio, Speaker, MicVocal, Projector, Plug, Printer, ShoppingBasket } from 'lucide-react';
+import { CalendarDays, Radio, Speaker, MicVocal, Projector, Plug, Printer, ShoppingBag } from 'lucide-react';
 import { useAppStore } from '../domain/store';
 import { availableCount } from '../domain/logic';
 import { Field } from '../components/Elements';
@@ -25,7 +25,7 @@ export function Catalog() {
   };
   return <div className="page-content">
     <div className="page-heading"><div><p className="overline">ОБОРУДОВАНИЕ</p><h1>Каталог</h1></div>
-      <Link className="button primary cart-button" to={`/${mode}/${role}/new`}><ShoppingBasket size={18}/> Заявка ({cartCount})</Link></div>
+      <Link className="button primary cart-button" to={`/${mode}/${role}/new`}><ShoppingBag size={18}/> Заявка ({cartCount})</Link></div>
     <div className="filter-bar"><Field label="С даты"><input type="date" value={data.cartStart} onChange={e => changeDate(e.target.value, e.target.value > data.cartEnd ? e.target.value : data.cartEnd)}/></Field>
       <Field label="По дату"><input type="date" min={data.cartStart} value={data.cartEnd} onChange={e => changeDate(data.cartStart, e.target.value)}/></Field>
       <Field label="Поиск"><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Название или категория"/></Field></div>

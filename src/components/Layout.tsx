@@ -1,13 +1,26 @@
 import { Link, NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { isOverdue } from '../domain/logic';
 import { Archive, ClipboardList, Home, LayoutGrid, RotateCcw, ScanLine, UserRound, Wrench } from 'lucide-react';
 import { useAppStore } from '../domain/store';
+import { OverdueDialog } from './OverdueDialog';
 
 export function Layout() {
   const { mode, role } = useParams();
   const navigate = useNavigate();
   const reset = useAppStore(state => state.reset);
+  const [overdueNotification, setOverdueNotification] = useState<string | null>(null);
   const mini = mode === 'miniapp';
   const admin = role === 'admin';
+  useEffect(() => {
+    if (admin) return;
+    const timer = window.setTimeout(() => {
+      const state = useAppStore.getState();
+      const active = state.bookings.find(booking => isOverdue(state, booking));
+      if (active) setOverdueNotification(active.id);
+    }, 15000);
+    return () => window.clearTimeout(timer);
+  }, [admin]);
   const root = `/${mode}/${role}`;
   const links = admin ? [
     { path: 'requests', label: 'Заявки', icon: ClipboardList },
@@ -30,6 +43,9 @@ export function Layout() {
         <div className="top-actions"><span className="demo-mark">ДЕМО</span><Link to={`/${mini ? 'desktop' : 'miniapp'}/${role}`} className="small-link">{mini ? <Wrench size={17}/> : <UserRound size={17}/>} {mini ? 'Desktop' : 'Mini App'}</Link></div>
       </header>
       <main className="page-body"><Outlet /></main>
+      {overdueNotification && !admin && <OverdueDialog key={overdueNotification}
+        bookingId={overdueNotification} bookingUrl={`${root}/bookings/${overdueNotification}`}
+        onAcknowledged={() => setOverdueNotification(null)}/>}
       {mini && <nav className="bottom-nav">{links.map(item => <NavLink key={item.path} to={`${root}/${item.path}`} className={({ isActive }) => `bottom-item ${isActive ? 'active' : ''}`}><item.icon size={22}/><span>{item.label}</span></NavLink>)}<Link className="bottom-item" to="/"><Home size={22}/><span>Главная</span></Link></nav>}
     </div>
   </div>;

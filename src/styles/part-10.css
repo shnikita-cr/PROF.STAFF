@@ -1,0 +1,67 @@
+/* PROF.STAFF: статусы и оформление */
+:root { --prof-red:#d63636; }
+.status.pending, .admin-shell .status.pending { background:var(--prof-white); color:var(--prof-black); border:1px solid var(--prof-black); }
+.status.success, .admin-shell .status.success { background:var(--prof-green); color:var(--prof-black); border-color:var(--prof-green); }
+.status.danger:not(.overdue-blink) { background:var(--prof-white); border:1px solid var(--prof-red); color:var(--prof-red); }
+.status.overdue-blink, .admin-shell .status.overdue-blink { background:var(--prof-red); color:var(--prof-white); border-color:var(--prof-red); animation:prof-overdue 1.2s ease-in-out infinite; }
+@keyframes prof-overdue { 0%,100% { background:var(--prof-red); color:var(--prof-white); } 50% { background:var(--prof-white); color:var(--prof-red); } }
+@media(prefers-reduced-motion:reduce){ .status.overdue-blink,.admin-shell .status.overdue-blink { animation:none; } }
+/* Нижняя панель: одинаковый фон, выделяется только текст и значок. */
+.mini-shell .bottom-nav { background:var(--prof-white); }
+.mini-shell .bottom-item, .mini-shell .bottom-item.active, .admin-shell .bottom-item.active { background:transparent; border-color:transparent; color:var(--prof-black); }
+.mini-shell .bottom-item.active svg, .mini-shell .bottom-item.active span { color:var(--prof-green); stroke:var(--prof-green); font-weight:800; }
+/* Карточки выбора маршрутов */
+.home-page .route-card:hover, .home-page .route-card:focus-visible { background:var(--prof-green); color:var(--prof-black); border-color:var(--prof-green); }
+.home-page .route-card:hover *, .home-page .route-card:focus-visible * { color:var(--prof-black); }
+/* Показатели администратора */
+.admin-shell .stat strong { color:var(--prof-black); }
+/* Отдельные блоки оформления заявки */
+.booking-form { display:grid; gap:16px; }
+.booking-section { display:grid; gap:14px; padding:24px; background:var(--prof-white); border:1px solid var(--prof-gray); border-radius:18px; min-width:0; }
+.booking-section .section-heading { padding-bottom:12px; border-bottom:1px solid var(--prof-gray); }
+.booking-section .section-heading h2 { margin:0 0 4px; font-size:18px; }
+.booking-section .section-heading p { margin:0; font-size:12px; }
+.booking-section .form-grid { margin:0; }
+.booking-section .field { min-width:0; }
+.booking-section .cart-row { gap:12px; }
+.booking-form>.button { min-height:52px; }
+@media(max-width:540px) { .booking-section { padding:15px; gap:12px; } .booking-section .section-heading h2 { font-size:16px; } }
+/* Реестр и детальная карточка */
+.equipment-filters { display:grid; grid-template-columns:minmax(0,1fr) minmax(130px,180px) minmax(130px,180px); gap:12px; margin:16px 0; align-items:center; }
+.equipment-filters .search-field { width:100%; min-width:0; max-width:none; margin:0; }
+.equipment-filters select { min-width:0; width:100%; min-height:44px; border:1px solid var(--prof-black); border-radius:10px; background:var(--prof-white); color:var(--prof-black); padding:9px 10px; }
+.unit-detail-panel { width:min(580px,100%); }
+.unit-detail-panel .equipment-components { display:flex; flex-direction:column; align-items:center; width:100%; }
+.unit-detail-panel .equipment-components h3 { align-self:stretch; }
+.unit-detail-panel .equipment-components .qr-code { width:min(260px,100%); margin-inline:auto; text-align:center; align-items:center; }
+.unit-detail-panel .equipment-components .qr-code svg { display:block; margin-inline:auto; width:min(200px,100%); max-width:100%; height:auto; }
+.unit-detail-panel .equipment-components .qr-code small { display:block; text-align:center; }
+.inline-link { font-weight:700; text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--prof-green); }
+.inline-link:hover { color:var(--prof-green); }
+.overdue-notification { position:fixed; z-index:40; bottom:calc(76px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); width:min(440px,calc(100% - 24px)); display:flex; gap:12px; justify-content:space-between; align-items:start; background:var(--prof-white); color:var(--prof-black); padding:16px; border:2px solid var(--prof-red); border-radius:14px; box-shadow:0 6px 26px #0002; }
+.overdue-notification strong { display:block; font-size:13px; }
+.overdue-notification p { margin:6px 0 0; font-size:12px; }
+.overdue-notification button { border:0; background:transparent; color:var(--prof-black); font-size:24px; line-height:1; }
+@media(min-width:650px){ .desktop-shell .overdue-notification { bottom:20px; } }
+@media(max-width:700px){ .equipment-filters { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .equipment-filters .search-field { grid-column:1/-1; } }
+@media(max-width:370px){ .equipment-filters { grid-template-columns:minmax(0,1fr); } .equipment-filters .search-field { grid-column:1; } }
+
+/* Просроченная заявка: отдельное подтверждение */
+.overdue-overlay { z-index: 100; }
+.overdue-dialog {
+  display: flex; flex-direction: column; gap: 15px;
+  width: min(460px, 100%); background: var(--prof-red); color: var(--prof-white);
+  border: 0; padding: 30px; text-align: left;
+}
+.overdue-dialog h2, .overdue-dialog p { margin: 0; color: var(--prof-white); }
+.overdue-dialog h2 { line-height: 1.2; }
+.overdue-dialog p { line-height: 1.45; }
+.overdue-booking-link { color: var(--prof-white); font-weight: 700; text-decoration: underline; }
+.overdue-dialog .overdue-progress { font-weight: 700; }
+.overdue-dialog .overdue-acknowledge {
+  background: var(--prof-white); color: var(--prof-black); border: 1px solid var(--prof-white);
+  width: 100%; min-height: 48px; justify-content: center;
+}
+.overdue-dialog .overdue-acknowledge:disabled { opacity: .55; cursor: wait; }
+.overdue-dialog small { color: var(--prof-white); }
+@media (max-width: 540px) { .overdue-dialog { padding: 24px 20px; } }

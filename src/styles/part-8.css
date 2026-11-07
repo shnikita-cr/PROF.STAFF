@@ -1,0 +1,56 @@
+/* Состояния и управление количеством */
+:root { --prof-green: #46ae5b; }
+.button.confirmed, .status.success { color: #46ae5b; background: #f2f2f2; border-color: #f2f2f2; }
+.status.success { color: #46ae5b; }
+.progress-track div { background: var(--prof-green); }
+.success-text { color: #46ae5b; }
+.button:focus-visible, .link-button:focus-visible, .unit-chip:focus-visible { outline: 2px solid var(--prof-green); outline-offset: 2px; }
+.status.danger.overdue-blink { animation: overdue-pulse 1.25s ease-in-out infinite; }
+@keyframes overdue-pulse { 0%,100% { background:#f2f2f2; color:#171717; } 50% { background:#171717; color:#ffffff; } }
+@media (prefers-reduced-motion: reduce) { .status.danger.overdue-blink { animation: none; } }
+.quantity-stepper { display:flex; align-items:center; border:1px solid #f2f2f2; border-radius:11px; overflow:hidden; height:42px; }
+.quantity-stepper button { width:39px; height:42px; border:0; background:#ffffff; display:grid; place-items:center; color:#171717; }
+.quantity-stepper button:disabled { opacity:.3; }
+.cart-actions .quantity-stepper input { width:53px; min-height:39px; border:0; border-radius:0; padding:0 3px; text-align:center; appearance:textfield; -moz-appearance:textfield; }
+.quantity-stepper input::-webkit-outer-spin-button, .quantity-stepper input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.quantity-total { color:#171717; font-size:12px; white-space:nowrap; }
+.cart-row { gap:12px; }
+.cart-row>strong { min-width:90px; }
+.cart-actions { flex-wrap:wrap; justify-content:flex-end; }
+.component-panel { border:1px solid #f2f2f2; border-radius:12px; padding:11px; margin:12px 0; }
+.component-panel .muted { margin:5px 0 10px; }
+.component-line { display:flex; justify-content:space-between; align-items:center; gap:8px; border-bottom:1px solid #f2f2f2; padding:8px 0; }
+.component-line span { font-size:12px; font-weight:650; min-width:0; }
+.component-line small { display:block; font-size:10px; font-weight:400; color:#171717; overflow-wrap:anywhere; margin-top:3px; }
+.button.compact { font-size:11px; padding:6px 9px; min-height:34px; flex-shrink:0; }
+.component-panel>.button { margin-top:11px; }
+.cancel-issues { border-top:1px solid #f2f2f2; margin-top:14px; padding-top:5px; }
+.cancel-issues .spread { padding:8px 0; border-bottom:1px solid #f2f2f2; font-size:12px; }
+.danger-link { color:#171717; font-size:11px; }
+.dialog-actions { display:flex; justify-content:flex-end; gap:8px; }
+.equipment-components { display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.equipment-components h3 { grid-column:1/-1; }
+.equipment-components .qr-code { padding:8px; border:1px solid #f2f2f2; border-radius:12px; }
+.equipment-components .qr-code svg { width:min(132px,100%); height:auto; }
+.equipment-components .qr-code small { overflow-wrap:anywhere; text-align:center; }
+/* Выпадающий список состояния возврата */
+.detail-side select { appearance:auto; -webkit-appearance:menulist; background:#ffffff; color:#171717; min-height:44px; padding:9px 10px; }
+.detail-side select:focus { border-color:var(--prof-green); outline:2px solid #46ae5b; outline-offset:1px; }
+@media(max-width:540px) {
+  .mini-shell .cart-row { flex-direction:column; align-items:stretch; }
+  .mini-shell .cart-actions { justify-content:flex-start; }
+  .mini-shell .component-line { align-items:flex-start; }
+  .equipment-components { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+/* Фирменный зелёный для доступности и подтверждённых операций */
+.equipment-count strong, .success-text { color: #46ae5b; }
+.quantity-stepper button:not(:disabled):hover { background: #f2f2f2; color: #46ae5b; }
+.button.confirmed { border-color: #46ae5b; }
+.status.success { border-color: #46ae5b; }
+.cancel-issues .spread { gap: 12px; }
+@media (max-width: 480px) {
+  .mini-shell .cart-actions { flex-wrap: wrap; }
+  .mini-shell .cart-row > strong { min-width: 0; }
+  .mini-shell .component-panel { padding: 9px; }
+}

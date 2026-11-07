@@ -1,0 +1,235 @@
+.mini-shell .app-main {
+  width:100%
+}
+
+.mini-shell .topbar {
+  height:75px;
+  padding:0 17px
+}
+
+.mini-shell .top-brand {
+  font-size:20px
+}
+
+.mini-shell .top-caption {
+  font-size:10px
+}
+
+.mini-shell .small-link {
+  font-size:0;
+  gap:0
+}
+
+.mini-shell .page-body {
+  padding:22px 15px 98px
+}
+
+.mini-shell h1 {
+  font-size:28px
+}
+
+.mini-shell .page-heading {
+  align-items:flex-start
+}
+
+.mini-shell .page-heading>.button {
+  font-size:12px;
+  padding:10px
+}
+
+.mini-shell .heading-icon {
+  display:none
+}
+
+.mini-shell .catalog-grid {
+  grid-template-columns:1fr
+}
+
+.mini-shell .equipment-card {
+  min-height:230px
+}
+
+.mini-shell .equipment-count {
+  margin-top:15px
+}
+
+.mini-shell .filter-bar {
+  padding:13px;
+  gap:9px
+}
+
+.mini-shell .filter-bar>.field {
+  flex:1 1 calc(50% - 9px);
+  min-width:120px
+}
+
+.mini-shell .filter-bar>.field:last-child {
+  flex-basis:100%
+}
+
+.mini-shell .detail-layout {
+  grid-template-columns:1fr
+}
+
+.mini-shell .stats-grid {
+  gap:7px
+}
+
+.mini-shell .stat {
+  padding:13px
+}
+
+.mini-shell .stat strong {
+  font-size:25px
+}
+
+.mini-shell .stat span {
+  font-size:10px
+}
+
+.mini-shell .detail-side {
+  order:-1
+}
+
+.mini-shell .sticky-card {
+  position:static
+}
+
+.mini-shell .bottom-nav {
+  position:fixed;
+  z-index:10;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100%,470px);
+  background:#ffffff;
+  border-top:1px solid #f2f2f2;
+  display:flex;
+  justify-content:space-around;
+  padding:11px 5px max(11px,env(safe-area-inset-bottom))
+}
+
+.bottom-item {
+  display:grid;
+  justify-items:center;
+  gap:5px;
+  color:#171717;
+  font-size:10px;
+  padding:3px 10px
+}
+
+.bottom-item.active {
+  color:#171717;
+  font-weight:800
+}
+
+.mini-shell .surface-form,.mini-shell .card {
+  padding:16px
+}
+
+.mini-shell .form-grid {
+  gap:8px
+}
+
+.mini-shell .table-wrap td,.mini-shell .table-wrap th {
+  padding:12px
+}
+
+.mini-shell .page-heading {
+  gap:9px
+}
+
+.mini-shell .list-card {
+  padding:15px
+}
+
+.mini-shell .list-card .spread {
+  flex-wrap:wrap
+}
+
+@media(max-width:1000px) {
+  .catalog-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+  .detail-layout {
+    grid-template-columns:1fr
+  }
+  .page-body {
+    padding:26px
+  }
+  .sidebar {
+    width:210px
+  }
+}
+
+@media(max-width:680px) {
+  .desktop-shell {
+    display:block
+  }
+  .desktop-shell .sidebar {
+    display:none
+  }
+  .desktop-shell .topbar {
+    padding:0 17px
+  }
+  .desktop-shell .page-body {
+    padding:20px 14px 40px
+  }
+  .desktop-shell .catalog-grid {
+    grid-template-columns:1fr
+  }
+  .routes-grid {
+    grid-template-columns:1fr
+  }
+  .route-card {
+    min-height:170px
+  }
+  .home-page {
+    padding:34px 16px
+  }
+  .home-intro {
+    font-size:16px
+  }
+  .filter-bar {
+    display:grid;
+    grid-template-columns:1fr 1fr
+  }
+  .filter-bar>.field:last-child {
+    grid-column:span 2
+  }
+  .stats-grid {
+    gap:7px
+  }
+  .stat {
+    padding:14px
+  }
+  .stat strong {
+    font-size:23px
+  }
+  .detail-layout {
+    grid-template-columns:1fr
+  }
+  .top-caption {
+    font-size:10px
+  }
+  .page-heading {
+    align-items:flex-start
+  }
+  h1 {
+    font-size:28px
+  }
+}
+
+@media(max-width:390px) {
+  .details-grid,.form-grid {
+    grid-template-columns:1fr
+  }
+  .mini-shell .page-heading>.button {
+    padding:8px;
+    font-size:11px
+  }
+  .top-actions {
+    gap:5px
+  }
+}
+

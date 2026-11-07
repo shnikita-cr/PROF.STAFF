@@ -1,0 +1,105 @@
+/* ПРОФ: фирменная типографика и мобильные экраны */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  font-family: 'Raleway', Arial, sans-serif;
+  color: #171717;
+  background: #f2f2f2;
+}
+
+body, button, input, select, textarea { font-family: 'Raleway', Arial, sans-serif; }
+h1, h2, h3, .brand, .top-brand, .home-wrap>h1 { color: #171717; }
+.brand, .top-brand, .home-wrap>h1 { font-weight: 900; letter-spacing: -.025em; }
+.home-wrap>h1 { overflow-wrap: anywhere; }
+.home-wrap>h1 span, .brand span, .top-brand span { color: #171717; }
+.button.primary, .nav-item.active { background: #171717; border-color: #171717; }
+.button.primary:hover { background: #46ae5b; }
+.route-card:hover { background: #f2f2f2; }
+.overline { color: #171717; }
+
+/* Один логотип в настольной версии */
+.desktop-shell .topbar { min-height: 76px; }
+.desktop-shell .top-caption { font-size: 13px; margin: 0; }
+.desktop-shell .top-brand { display: none; }
+.brand { letter-spacing: -.02em; white-space: nowrap; }
+
+/* Каталог и корзина */
+.cart-button, .new-request { flex-shrink: 0; white-space: nowrap; }
+.cart-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid #f2f2f2; padding: 9px 0; }
+.cart-row .error-text { width: 100%; }
+.cart-actions { display: flex; align-items: center; gap: 8px; }
+.cart-actions input { width: 65px; min-height: 40px; border: 1px solid #f2f2f2; border-radius: 9px; padding: 6px; }
+.field textarea { display: block; width: 100%; border: 1px solid #f2f2f2; border-radius: 10px; padding: 11px; background: #ffffff; color: #171717; resize: vertical; }
+.equipment-card { min-width: 0; }
+.equipment-card .button { margin-top: 12px; }
+
+/* Краткие детали заявки; код по кнопке в диалоге */
+.booking-detail .page-heading { margin-bottom: 12px; }
+.booking-detail .compact-detail { gap: 12px; padding: 18px; }
+.booking-detail .compact-detail .details-grid { gap: 12px; }
+.booking-detail .compact-detail .details-grid>div { gap: 3px; min-width: 0; }
+.booking-detail .compact-detail .details-grid strong { overflow-wrap: anywhere; }
+.booking-detail .compact-detail h3 { margin: 3px 0 8px; }
+.booking-detail .compact-detail .line-item { padding: 8px 0; }
+
+/* Диалог поверх страницы вместо малозаметной строки внизу */
+.notice-overlay { position: fixed; z-index: 50; inset: 0; background: rgba(0,0,0,0.761); display: grid; place-items: center; padding: 16px; }
+.notice-dialog { width: min(430px, 100%); max-height: min(88dvh, 720px); overflow: auto; background: #ffffff; border-radius: 18px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.133); }
+.notice-dialog h2 { margin: 0 0 12px; }
+.notice-dialog p { line-height: 1.45; }
+.notice-dialog .qr-code { max-width: 100%; }
+.notice-dialog .qr-code svg { width: min(210px, 100%); height: auto; }
+.unit-detail-panel .qr-code { padding: 4px; }
+.unit-detail-panel .qr-code svg { width: min(190px, 100%); height: auto; }
+
+/* Реестр оборудования */
+.table-wrap th:first-child, .table-wrap td:first-child { padding-left: 28px; }
+
+/* Мобильная оболочка */
+.mini-shell { min-width: 0; width: min(100%, 470px); }
+.mini-shell .topbar { padding: 10px 14px; height: 66px; min-width: 0; }
+.mini-shell .top-brand { font-size: 19px; white-space: nowrap; }
+.mini-shell .top-actions { gap: 6px; }
+.mini-shell .demo-mark { font-size: 9px; padding: 5px 7px; }
+.mini-shell .page-body { padding: 15px 12px calc(85px + env(safe-area-inset-bottom)); }
+.mini-shell .page-heading { gap: 12px; align-items: center; margin-bottom: 16px; }
+.mini-shell .page-heading>div { min-width: 0; }
+.mini-shell .page-heading h1 { font-size: clamp(24px, 7vw, 29px); margin: 0; }
+.mini-shell .overline { font-size: 10px; margin-bottom: 3px; }
+.mini-shell .muted { line-height: 1.45; }
+.mini-shell .page-heading .muted { font-size: 12px; }
+.mini-shell .new-request, .mini-shell .cart-button { min-height: 40px; border-radius: 12px; font-size: 12px; padding: 8px 11px; }
+.mini-shell .filter-bar { padding: 12px; margin-bottom: 14px; }
+.mini-shell .equipment-card { min-height: 0; padding: 16px; }
+.mini-shell .equipment-card h2 { margin: 10px 0 3px; }
+.mini-shell .equipment-count { margin-top: 10px; }
+.mini-shell .equipment-card .button { margin-top: 9px; }
+.mini-shell .list-card { padding: 13px 15px; gap: 6px; min-width: 0; }
+.mini-shell .list-card .spread { align-items: flex-start; }
+.mini-shell .list-card .spread strong { white-space: nowrap; }
+.mini-shell .status { padding: 5px 8px; font-size: 10px; }
+.mini-shell .surface-form { padding: 14px; gap: 13px; }
+.mini-shell .surface-form h3 { margin: 4px 0 0; }
+.mini-shell .details-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.mini-shell .details-grid strong { font-size: 12px; }
+.mini-shell .booking-detail .compact-detail { padding: 13px; }
+.mini-shell .booking-detail .back-link { margin-bottom: 9px; }
+.mini-shell .qr-code svg { max-width: 100%; }
+.mini-shell .detail-layout { min-width: 0; }
+.mini-shell .card { padding: 14px; }
+
+/* Стабильная нижняя панель на всех экранах */
+.mini-shell .bottom-nav { height: calc(65px + env(safe-area-inset-bottom)); padding: 0 8px env(safe-area-inset-bottom); display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: stretch; justify-content: stretch; }
+.mini-shell .bottom-item { padding: 8px 3px; min-width: 0; min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 10px; }
+.mini-shell .bottom-item svg { width: 22px; height: 22px; flex: none; }
+.mini-shell .bottom-item span { white-space: nowrap; }
+
+@media(max-width: 390px) {
+  .mini-shell .topbar { padding: 8px 11px; }
+  .mini-shell .page-body { padding: 12px 10px calc(85px + env(safe-area-inset-bottom)); }
+  .mini-shell .page-heading .button { max-width: 145px; white-space: normal; text-align: center; line-height: 1.2; }
+  .mini-shell .filter-bar>.field { min-width: 0; }
+  .mini-shell .form-grid, .mini-shell .booking-detail .details-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .mini-shell .status { white-space: normal; text-align: center; }
+  .home-wrap>h1 { font-size: clamp(44px, 13vw, 68px); }
+}

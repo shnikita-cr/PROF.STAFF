@@ -1,0 +1,53 @@
+/* PROF.STAFF: четыре цвета и различие ролей */
+:root { --prof-green:#46ae5b; --prof-black:#171717; --prof-white:#ffffff; --prof-gray:#f2f2f2; }
+body { color:var(--prof-black); background:var(--prof-gray); }
+.muted, .small, .overline, .field, .back-link { color:var(--prof-black); }
+.app-shell { color:var(--prof-black); }
+.button.primary, .nav-item.active, .bottom-item.active { background:var(--prof-green); border-color:var(--prof-green); color:var(--prof-black); }
+.button.primary:hover, .button.secondary:hover { background:var(--prof-green); color:var(--prof-black); }
+.button, .nav-item, .route-card, .card, .surface-form, .list-card, .filter-bar, .stat { border-color:var(--prof-gray); }
+.status { border:1px solid var(--prof-black); color:var(--prof-black); background:var(--prof-white); }
+.status.success, .status.pending { border-color:var(--prof-green); background:var(--prof-green); color:var(--prof-black); }
+.status.danger { border-color:var(--prof-black); background:var(--prof-gray); color:var(--prof-black); }
+.status.danger.overdue-blink { animation: overdue-monochrome 1.25s ease-in-out infinite; }
+@keyframes overdue-monochrome { 0%,100% { background:var(--prof-white); color:var(--prof-black); } 50% { background:var(--prof-green); color:var(--prof-black); } }
+@media(prefers-reduced-motion:reduce) { .status.danger.overdue-blink { animation:none; } }
+/* Активист: зелёные действия и мягкие карточки. */
+.activist-shell .button.primary, .activist-shell .nav-item.active { background:var(--prof-green); color:var(--prof-black); border-color:var(--prof-green); }
+.activist-shell .equipment-card, .activist-shell .list-card { border-radius:20px; }
+.activist-shell .equipment-count strong { color:var(--prof-green); }
+/* Администратор: строгие чёрные кнопки, зелёные отметки состояний. */
+.admin-shell .button.primary, .admin-shell .nav-item.active { background:var(--prof-black); color:var(--prof-white); border-color:var(--prof-black); }
+.admin-shell .button.primary:hover { background:var(--prof-black); color:var(--prof-green); }
+.admin-shell .button.secondary, .admin-shell .stat { background:var(--prof-gray); color:var(--prof-black); border-color:var(--prof-black); }
+.admin-shell .status.success, .admin-shell .bottom-item.active { color:var(--prof-black); background:var(--prof-green); }
+.admin-shell .card, .admin-shell .list-card { border-radius:10px; border-color:var(--prof-black); }
+.admin-shell .stat strong, .admin-shell .equipment-count strong { color:var(--prof-green); }
+/* Фильтры: единая ширина и корректное выравнивание на телефонах. */
+.admin-request-filters { display:grid; grid-template-columns:minmax(0,1fr) minmax(165px,220px); align-items:stretch; gap:10px; }
+.admin-request-filters .search-field, .admin-request-filters .status-filter { width:100%; max-width:100%; min-width:0; height:44px; margin:0; }
+.status-filter, .booking-filter-row select { border:1px solid var(--prof-black); border-radius:10px; background:var(--prof-white); color:var(--prof-black); min-height:44px; padding:9px 35px 9px 12px; max-width:100%; }
+.booking-filter-row { display:flex; align-items:center; gap:12px; margin:0 0 15px; }
+.booking-filter-row label { font-size:12px; font-weight:700; flex:none; }
+.booking-filter-row select { width:min(260px,100%); min-width:0; }
+@media(max-width:700px) {
+ .admin-request-filters, .mini-shell .admin-request-filters { grid-template-columns:minmax(0,1fr); }
+ .booking-filter-row { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; }
+ .booking-filter-row select { width:100%; }
+}
+/* Карточка инвентарной единицы без горизонтального переполнения. */
+.unit-detail-panel { width:min(610px,100%); min-width:0; max-width:100%; overflow-x:hidden; }
+.unit-panel-header { display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+.unit-panel-header h2 { margin:0; overflow-wrap:anywhere; }
+.unit-detail-panel p, .unit-detail-panel a { overflow-wrap:anywhere; }
+.unit-detail-panel .equipment-components { grid-template-columns:repeat(2,minmax(0,1fr)); min-width:0; }
+.unit-detail-panel .qr-code { min-width:0; width:100%; display:flex; flex-direction:column; align-items:center; }
+.unit-detail-panel .qr-code svg { max-width:100%; height:auto; }
+.unit-detail-panel .qr-code small { max-width:100%; overflow-wrap:anywhere; }
+@media(max-width:480px) {
+ .scanner-modal { padding:10px; }
+ .unit-detail-panel { padding:15px 12px; max-height:calc(100dvh - 20px); }
+ .unit-detail-panel .equipment-components { gap:8px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .unit-detail-panel .equipment-components .qr-code { padding:5px 2px; }
+ .unit-detail-panel .equipment-components .qr-code svg { width:min(115px,100%); }
+}

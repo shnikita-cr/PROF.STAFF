@@ -17,7 +17,7 @@ export function Layout() {
     { path: 'bookings', label: 'Мои заявки', icon: ClipboardList },
   ];
   const modeName = mini ? 'Mini App' : 'Desktop';
-  return <div className={`app-shell ${mini ? 'mini-shell' : 'desktop-shell'}`}>
+  return <div className={`app-shell ${mini ? 'mini-shell' : 'desktop-shell'} ${admin ? 'admin-shell' : 'activist-shell'}`}>
     {!mini && <aside className="sidebar">
       <Link to="/" className="brand">PROF<span>.</span>STAFF</Link>
       <div className="side-subtitle">Оборудование студобъединений</div>

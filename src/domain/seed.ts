@@ -21,7 +21,7 @@ const makeUnits = (typeId: string, prefix: string, count: number, room: string, 
 
 export function createSeed(): AppData {
   const units = [
-    ...makeUnits('radio', 'RAD', 12, '349', 'Шкаф 2', 'Полка 3'),
+    ...makeUnits('radio', 'RAD', 42, '349', 'Шкаф 2', 'Полка 3'),
     ...makeUnits('speaker', 'SPK', 2, '350', 'Шкаф 1', 'Полка 1'),
     ...makeUnits('microphone', 'MIC', 6, '349', 'Шкаф 1', 'Полка 2'),
     ...makeUnits('projector', 'PRJ', 2, '350', 'Шкаф 3', 'Полка 1'),
@@ -42,6 +42,7 @@ export function createSeed(): AppData {
       { id: '1042', applicant: 'Мария Иванова', department: 'Медиацентр', eventName: 'Открытая лекция', start: isoDate(5), end: isoDate(5), createdAt: now, status: 'pending', lines: [{ typeId: 'projector', quantity: 1 }] },
       { id: '1040', applicant: 'Илья Орлов', department: 'ПРОФ.event', eventName: 'Форум студобъединений', start: isoDate(-3), end: isoDate(-1), createdAt: now, status: 'approved', lines: [{ typeId: 'microphone', quantity: 2 }] },
     ],
+    componentScans: [],
     operations: [
       { id: 'op-1', bookingId: '1040', unitId: 'MIC-001', kind: 'issue', condition: 'ok', at: now, operator: 'Ирина' },
       { id: 'op-2', bookingId: '1040', unitId: 'MIC-002', kind: 'issue', condition: 'ok', at: now, operator: 'Ирина' },

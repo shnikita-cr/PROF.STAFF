@@ -3,19 +3,19 @@
 
 :root {
   font-family: 'Raleway', Arial, sans-serif;
-  color: #252326;
+  color: #171717;
   background: #f2f2f2;
 }
 
 body, button, input, select, textarea { font-family: 'Raleway', Arial, sans-serif; }
-h1, h2, h3, .brand, .top-brand, .home-wrap>h1 { color: #252326; }
+h1, h2, h3, .brand, .top-brand, .home-wrap>h1 { color: #171717; }
 .brand, .top-brand, .home-wrap>h1 { font-weight: 900; letter-spacing: -.025em; }
 .home-wrap>h1 { overflow-wrap: anywhere; }
-.home-wrap>h1 span, .brand span, .top-brand span { color: #ffdf30; }
-.button.primary, .nav-item.active { background: #ffdf30; border-color: #ffdf30; }
-.button.primary:hover { background: #f6d21e; }
-.route-card:hover { background: #fff3ac; }
-.overline { color: #65615a; }
+.home-wrap>h1 span, .brand span, .top-brand span { color: #171717; }
+.button.primary, .nav-item.active { background: #171717; border-color: #171717; }
+.button.primary:hover { background: #46ae5b; }
+.route-card:hover { background: #f2f2f2; }
+.overline { color: #171717; }
 
 /* Один логотип в настольной версии */
 .desktop-shell .topbar { min-height: 76px; }
@@ -25,11 +25,11 @@ h1, h2, h3, .brand, .top-brand, .home-wrap>h1 { color: #252326; }
 
 /* Каталог и корзина */
 .cart-button, .new-request { flex-shrink: 0; white-space: nowrap; }
-.cart-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid #e7e7e7; padding: 9px 0; }
+.cart-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid #f2f2f2; padding: 9px 0; }
 .cart-row .error-text { width: 100%; }
 .cart-actions { display: flex; align-items: center; gap: 8px; }
-.cart-actions input { width: 65px; min-height: 40px; border: 1px solid #d5d5d5; border-radius: 9px; padding: 6px; }
-.field textarea { display: block; width: 100%; border: 1px solid #e4e5e7; border-radius: 10px; padding: 11px; background: #fff; color: #252326; resize: vertical; }
+.cart-actions input { width: 65px; min-height: 40px; border: 1px solid #f2f2f2; border-radius: 9px; padding: 6px; }
+.field textarea { display: block; width: 100%; border: 1px solid #f2f2f2; border-radius: 10px; padding: 11px; background: #ffffff; color: #171717; resize: vertical; }
 .equipment-card { min-width: 0; }
 .equipment-card .button { margin-top: 12px; }
 
@@ -43,8 +43,8 @@ h1, h2, h3, .brand, .top-brand, .home-wrap>h1 { color: #252326; }
 .booking-detail .compact-detail .line-item { padding: 8px 0; }
 
 /* Диалог поверх страницы вместо малозаметной строки внизу */
-.notice-overlay { position: fixed; z-index: 50; inset: 0; background: #1b1b1bc2; display: grid; place-items: center; padding: 16px; }
-.notice-dialog { width: min(430px, 100%); max-height: min(88dvh, 720px); overflow: auto; background: #fff; border-radius: 18px; padding: 24px; box-shadow: 0 16px 48px #0002; }
+.notice-overlay { position: fixed; z-index: 50; inset: 0; background: rgba(0,0,0,0.761); display: grid; place-items: center; padding: 16px; }
+.notice-dialog { width: min(430px, 100%); max-height: min(88dvh, 720px); overflow: auto; background: #ffffff; border-radius: 18px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.133); }
 .notice-dialog h2 { margin: 0 0 12px; }
 .notice-dialog p { line-height: 1.45; }
 .notice-dialog .qr-code { max-width: 100%; }

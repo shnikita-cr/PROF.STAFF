@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createSeed } from './seed';
-import { approveBooking, availableCount, issueUnit, returnUnit, today, validateLines } from './logic';
+import { approveBooking, availableCount, issueUnit, returnUnit, scanComponent, finalizeIncompleteReturn, undoIssue, today, validateLines } from './logic';
 import type { AppData, Booking, BookingLine, Condition } from './types';
 
 interface CreateBookingInput {
@@ -27,6 +27,9 @@ interface AppStore extends AppData {
   cancel: (id: string) => void;
   issue: (bookingId: string, unitId: string) => void;
   returnEquipment: (bookingId: string, unitId: string, condition: Condition) => void;
+  scanPart: (bookingId: string, componentId: string, kind: 'issue' | 'return', condition?: Condition) => void;
+  incompleteReturn: (bookingId: string, unitId: string, condition: 'incomplete' | 'damaged') => void;
+  cancelIssue: (bookingId: string, unitId: string) => void;
   reset: () => void;
 }
 
@@ -35,6 +38,7 @@ const core = (state: AppStore): AppData => ({
   units: state.units,
   bookings: state.bookings,
   operations: state.operations,
+  componentScans: state.componentScans ?? [],
 });
 
 export const useAppStore = create<AppStore>()(persist((set, get) => ({
@@ -89,5 +93,19 @@ export const useAppStore = create<AppStore>()(persist((set, get) => ({
   },
   issue(bookingId, unitId) { set(issueUnit(core(get()), bookingId, unitId)); },
   returnEquipment(bookingId, unitId, condition) { set(returnUnit(core(get()), bookingId, unitId, condition)); },
+  scanPart(bookingId, componentId, kind, condition = 'ok') { set(scanComponent(core(get()), bookingId, componentId, kind, condition)); },
+  incompleteReturn(bookingId, unitId, condition) { set(finalizeIncompleteReturn(core(get()), bookingId, unitId, condition)); },
+  cancelIssue(bookingId, unitId) { set(undoIssue(core(get()), bookingId, unitId)); },
   reset() { set({ ...createSeed(), cart: [], cartStart: today(), cartEnd: today() }); },
-}),  { name: 'prof-staff-demo-v1', version: 1, partialize: state => ({ ...core(state), cart: state.cart, cartStart: state.cartStart, cartEnd: state.cartEnd }) }));
+}), {
+  name: 'prof-staff-demo-v1',
+  version: 2,
+  migrate: persisted => {
+    const previous = persisted as Partial<AppData>;
+    const units = previous.units ?? [];
+    const existing = new Set(units.map(unit => unit.id));
+    const additional = createSeed().units.filter(unit => unit.typeId === 'radio' && !existing.has(unit.id));
+    return { ...previous, units: [...units, ...additional] };
+  },
+  partialize: state => ({ ...core(state), cart: state.cart, cartStart: state.cartStart, cartEnd: state.cartEnd }),
+}));

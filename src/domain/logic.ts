@@ -1,4 +1,5 @@
 import type { AppData, Booking, BookingLine, Condition, EquipmentOperation, EquipmentUnit } from './types';
+import { componentCodes } from './components';
 
 export const overlaps = (startA: string, endA: string, startB: string, endB: string): boolean =>
   startA <= endB && startB <= endA;
@@ -71,6 +72,49 @@ export function issueUnit(data: AppData, bookingId: string, unitId: string): App
   const otherIssued = data.units.filter(item => item.typeId === unit.typeId && unitHolder(data, item.id) && !isIssuedFor(data, bookingId, item.id)).length;
   if (typeReadyCount - Math.max(reservedOther, otherIssued) <= issuedCount) throw new Error('Нет свободных единиц для выдачи');
   return appendOperation(data, bookingId, unitId, 'issue', 'ok');
+}
+
+export function scanComponent(data: AppData, bookingId: string, componentId: string, kind: 'issue' | 'return', condition: Condition = 'ok'): AppData {
+  const unit = data.units.find(item => componentCodes(item).some(component => component.id === componentId));
+  if (!unit) throw new Error('Инвентарный номер не найден');
+  const parts = componentCodes(unit);
+  const booking = data.bookings.find(item => item.id === bookingId);
+  if (!booking || booking.status !== 'approved') throw new Error('Заявка не согласована');
+  if (kind === 'issue' && (unitHolder(data, unit.id) || unit.status !== 'ready')) throw new Error('Единица недоступна для выдачи');
+  if (kind === 'return' && !isIssuedFor(data, bookingId, unit.id)) throw new Error('Эта единица не выдана по заявке');
+  if (kind === 'issue') {
+    const line = booking.lines.find(item => item.typeId === unit.typeId);
+    if (!line) throw new Error('Этого оборудования нет в заявке');
+    const alreadyIssued = issuedUnits(data, bookingId).filter(item => item.typeId === unit.typeId).length;
+    const pendingUnitIds = new Set((data.componentScans ?? [])
+      .filter(scan => scan.bookingId === bookingId && scan.kind === 'issue')
+      .map(scan => scan.componentId.split(':')[0]));
+    const pendingSameType = [...pendingUnitIds].filter(id => data.units.some(item => item.id === id && item.typeId === unit.typeId)).length;
+    if (!pendingUnitIds.has(unit.id) && alreadyIssued + pendingSameType >= line.quantity) {
+      throw new Error('Количество по заявке уже отсканировано');
+    }
+  }
+  const scans = data.componentScans ?? [];
+  if (scans.some(scan => scan.bookingId === bookingId && scan.componentId === componentId && scan.kind === kind)) {
+    throw new Error('Этот QR-код уже отсканирован');
+  }
+  const next = { ...data, componentScans: [...scans, { bookingId, componentId, kind }] };
+  const scannedParts = next.componentScans.filter(scan => scan.bookingId === bookingId && scan.kind === kind && parts.some(part => part.id === scan.componentId));
+  if (scannedParts.length !== parts.length) return next;
+  const finished = kind === 'issue' ? issueUnit(next, bookingId, unit.id) : returnUnit(next, bookingId, unit.id, condition);
+  return { ...finished, componentScans: finished.componentScans?.filter(scan => !(scan.bookingId === bookingId && scan.kind === kind && parts.some(part => part.id === scan.componentId))) };
+}
+
+export function finalizeIncompleteReturn(data: AppData, bookingId: string, unitId: string, condition: 'incomplete' | 'damaged'): AppData {
+  if (!isIssuedFor(data, bookingId, unitId)) throw new Error('Оборудование не выдано по этой заявке');
+  const returned = returnUnit(data, bookingId, unitId, condition);
+  return { ...returned, componentScans: (returned.componentScans ?? []).filter(scan => !(scan.bookingId === bookingId && scan.kind === 'return' && scan.componentId.startsWith(`${unitId}:`))) };
+}
+
+export function undoIssue(data: AppData, bookingId: string, unitId: string): AppData {
+  if (!isIssuedFor(data, bookingId, unitId)) throw new Error('Отменить можно только активную выдачу');
+  const updated = appendOperation(data, bookingId, unitId, 'void_issue', 'ok');
+  return { ...updated, componentScans: (updated.componentScans ?? []).filter(scan => !(scan.bookingId === bookingId && scan.componentId.startsWith(`${unitId}:`))) };
 }
 
 export function returnUnit(data: AppData, bookingId: string, unitId: string, condition: Condition): AppData {

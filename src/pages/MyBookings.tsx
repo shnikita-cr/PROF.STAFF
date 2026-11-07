@@ -8,10 +8,20 @@ import { QrCode } from '../components/QrCode';
 export function MyBookings() {
   const data = useAppStore();
   const { mode, role } = useParams();
-  const bookings = [...data.bookings].sort((a, b) => b.id.localeCompare(a.id));
+  const [filter, setFilter] = useState('all');
+  const bookings = [...data.bookings]
+    .filter(booking => filter === 'all' || (filter === 'overdue'
+      ? isOverdue(data, booking)
+      : booking.status === filter))
+    .sort((a, b) => b.id.localeCompare(a.id));
   return <div className="page-content"><div className="page-heading"><div><p className="overline">КАБИНЕТ АКТИВИСТА</p><h1>Мои заявки</h1></div>
     <Link className="button primary new-request" to={`/${mode}/${role}/catalog`}>Новая заявка</Link></div>
-    <div className="list-stack">{!bookings.length && <Empty>Заявок пока нет.</Empty>}{bookings.map(booking =>
+    <div className="booking-filter-row"><label htmlFor="my-booking-status">Статус заявки</label><select id="my-booking-status" value={filter} onChange={event => setFilter(event.target.value)}>
+      <option value="all">Все заявки</option><option value="pending">На согласовании</option>
+      <option value="approved">Одобрены</option><option value="rejected">Отклонены</option>
+      <option value="overdue">Просрочены</option><option value="cancelled">Отменены</option>
+    </select></div>
+    <div className="list-stack">{!bookings.length && <Empty>Заявок по выбранному статусу нет.</Empty>}{bookings.map(booking =>
       <Link to={`/${mode}/${role}/bookings/${booking.id}`} className="list-card" key={booking.id}>
         <div className="spread"><strong>Заявка №{booking.id}</strong><Status text={bookingState(data, booking)} kind={booking.status}/></div>
         <div>{booking.eventName}</div>

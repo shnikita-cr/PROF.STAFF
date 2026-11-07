@@ -1,6 +1,6 @@
 export type BookingStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
 export type UnitStatus = 'ready' | 'maintenance';
-export type OperationKind = 'issue' | 'return';
+export type OperationKind = 'issue' | 'return' | 'void_issue';
 export type Condition = 'ok' | 'damaged' | 'incomplete';
 
 export interface EquipmentType {
@@ -46,9 +46,16 @@ export interface EquipmentOperation {
   operator: string;
 }
 
+export interface ComponentScan {
+  bookingId: string;
+  componentId: string;
+  kind: 'issue' | 'return';
+}
+
 export interface AppData {
   equipment: EquipmentType[];
   units: EquipmentUnit[];
   bookings: Booking[];
   operations: EquipmentOperation[];
+  componentScans?: ComponentScan[];
 }

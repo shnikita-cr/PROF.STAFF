@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react';
+import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { availableCount } from '../domain/logic';
@@ -34,14 +35,31 @@ export function NewBooking() {
       }}/></Field></div>
       <h3>Оборудование</h3>
       {data.cart.length === 0 && <p className="muted">Добавьте оборудование из каталога.</p>}
-      {data.cart.map(line => {
+      {[...data.cart].sort((a, b) =>
+        (data.equipment.find(item => item.id === a.typeId)?.name ?? '').localeCompare(
+          data.equipment.find(item => item.id === b.typeId)?.name ?? '', 'ru'
+        )
+      ).map(line => {
         const type = data.equipment.find(item => item.id === line.typeId);
         const max = availableCount(data, line.typeId, data.cartStart, data.cartEnd);
-        return <div className="cart-row" key={line.typeId}><strong>{type?.name}</strong>
-          <div className="cart-actions"><input type="number" min={1} max={Math.max(1,max)} aria-label={`Количество: ${type?.name}`} value={line.quantity} onChange={e => {
-            try { data.updateCart(line.typeId, Number(e.target.value)); setError(''); }
-            catch (cause) { setError(cause instanceof Error ? cause.message : 'Количество'); }
-          }}/><button className="link-button" type="button" onClick={() => data.updateCart(line.typeId,0)}>Убрать</button></div>
+        const update = (quantity: number) => {
+          try { data.updateCart(line.typeId, quantity); setError(''); }
+          catch (cause) { setError(cause instanceof Error ? cause.message : 'Количество'); }
+        };
+        return <div className="cart-row" key={line.typeId}>
+          <strong>{type?.name}</strong>
+          <div className="cart-actions">
+            <div className="quantity-stepper">
+              <button type="button" aria-label={`Уменьшить: ${type?.name}`} onClick={() => update(line.quantity - 1)}><Minus size={16}/></button>
+              <input type="number" min={0} max={max} aria-label={`Количество: ${type?.name}`} value={line.quantity}
+                onChange={event => {
+                  if (event.target.value !== '') update(Number(event.target.value));
+                }}/>
+              <button type="button" disabled={line.quantity >= max} aria-label={`Увеличить: ${type?.name}`} onClick={() => update(line.quantity + 1)}><Plus size={16}/></button>
+            </div>
+            <span className="quantity-total">/ {max} доступно</span>
+            <button className="link-button" type="button" onClick={() => update(0)}>Убрать</button>
+          </div>
           {line.quantity > max && <span className="error-text">Осталось {max} шт.</span>}
         </div>;
       })}
